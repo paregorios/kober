@@ -64,10 +64,13 @@ class Test_Markdown(TestCase):
         for fp in self.filepaths:
             mime_types, encodings = d.decipher(fp)
             s = fp.suffix
-            print(f'mime_types: {list(mime_types.keys())}')
             for expected in expected_mime_types[s]:
-                print(f'expected: {expected}')
                 assert_true(expected in list(mime_types.keys()))
             #for encoding in encodings:
             #    assert_equal(0, len(encoding))
 
+    def test_all(self):
+        d = Decipherer()
+        for fp in self.filepaths:
+            mime_types, encodings = d.decipher(fp)
+            pprint(mime_types, indent=4)

@@ -17,6 +17,6 @@ setuptools.setup(
         "License :: OSI Approved :: GNU Affero General Public License v3",
         "Operating System :: OS Independent",
     ],
-    install_requires=['python-magic'],
+    install_requires=['python-magic', 'regex'],
     python_requires='>=3.9.7'
 )

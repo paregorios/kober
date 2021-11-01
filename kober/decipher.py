@@ -4,6 +4,7 @@
 File format decipherer
 """
 
+from kober.markdown import MarkdownDetector
 import logging
 import magic
 import mimetypes
@@ -28,7 +29,7 @@ class Decipherer:
                 'success': 'debug',
                 'failure': 'warn'
             }
-        }        
+        }
 
     def decipher(self, filepath):
         logger.debug(f'filepath: "{filepath}"')
@@ -63,9 +64,25 @@ class Decipherer:
         attempts = float(attempts)
         for mime, score in mime_types.items():
             mime_types[mime] = score / attempts
+        try:
+            mime_types['text/plain']
+        except KeyError:
+            pass
+        else:
+            mime_types['text/markdown'] = self._try_markdown(inpath)
         for encoding, score in encodings.items():
             encodings[encoding] = score / attempts
         return mime_types, encodings
+
+    def _try_markdown(self, inpath: Path):
+        try:
+            getattr(self, 'markdown_detector')
+        except AttributeError:
+            self.markdown_detector = MarkdownDetector()
+        with open(inpath, 'r') as f:
+            md = f.read()
+        del f
+        return self.markdown_detector.detect(md)
 
     def _try_magic_from_file(self, inpath: Path, criterion: dict):
         score = 0.0
